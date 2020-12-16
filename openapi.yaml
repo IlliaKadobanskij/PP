@@ -1,0 +1,526 @@
+openapi: 3.0.1
+
+info:
+  title: Lab5
+  version: 1.0.0
+
+servers:
+- url: https://petstore.swagger.io/v2
+- url: http://petstore.swagger.io/v2
+
+tags:
+
+- name: playlist
+- name: user
+  externalDocs:
+    url: http://swagger.io
+
+paths:
+  
+  /playlist:
+    post:
+        tags:
+        - playlist
+        summary: Create playlist
+        description: This can only be done by the logged in user.
+        operationId: createPlaylist
+        
+        parameters:
+        - name: ownerid
+          in: query
+          description: The user name for login
+          required: true
+          schema:
+            type: string
+
+        
+        requestBody:
+          description: Created playlist object
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Playlist'
+          required: true
+        responses:
+          200:
+            description: successful operation
+          400:
+            description: Invalid ID supplied
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ApiResponse'
+          404:
+            description: video not found
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ApiResponse'
+        security:
+        - BasicAuth: []
+        
+  /playlist/get_videos:
+    get:
+      tags:
+      - playlist
+      summary: Returns video inventories by status
+      description: Returns a map of status codes to quantities
+      operationId: getInventory
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Video'
+  
+  /playlist/{playlistId}/deletePlaylist:
+    delete:
+      tags:
+      - playlist
+      summary: Deletes a playlist
+      operationId: deletePlaylistFromPlaylist
+      parameters:
+
+      - name: ownerid
+        in: query
+        description: The user name for login
+        required: true
+        schema:
+          type: string
+          
+      - name: playlistId
+        in: path
+        description: playlist id to delete
+        required: true
+        schema:
+          type: integer
+          format: int64
+          
+      responses:
+        200:
+            description: successful operation
+        400:
+          description: Invalid ID supplied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        404:
+          description: video not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+                    
+      security:
+        - BasicAuth: []
+  
+  /playlist/{playlistId}/uploadVideo:
+    post:
+      tags:
+      - playlist
+      summary: uploads a video
+      operationId: uploadVideo
+      parameters:
+      - name: ownerid
+        in: query
+        description: The user name for login
+        required: true
+        schema:
+          type: string
+      - name: playlistId
+        in: path
+        description: ID of playlist to upload to
+        required: true
+        schema:
+          items:
+            $ref: '#/components/schemas/Video'
+            
+      requestBody:
+        description: Video that needs to be added to the store
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Video'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Video'
+        required: true
+        
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Playlist'
+        400:
+          description: Invalid ID supplied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        404:
+          description: video not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+      security:
+        - BasicAuth: []
+  
+  
+  /playlist/{playlistId}/private:
+    put:
+      tags:
+      - playlist
+      summary: Updated playlist
+      description: This can only be done by the logged in user.
+      operationId: updatePlaylistPrivat
+      parameters:
+      - name: ownerid
+        in: query
+        description: The user name for login
+        required: true
+        schema:
+          type: string
+      - name: playlistId
+        in: path
+        description: Playlist that need to be updated
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: Updated playlist object
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/Playlist'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Playlist'
+          
+        400:
+          description: Invalid ID supplied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        404:
+          description: video not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+      security:
+        - BasicAuth: []
+  
+  /playlist/{playlistId}/public:
+    put:
+      tags:
+      - playlist
+      summary: Updated playlist
+      description: This can only be done by the logged in user.
+      operationId: updatePlaylistpublic
+      parameters:
+      - name: playlistId
+        in: path
+        description: Playlist that need to be updated
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: Updated playlist object
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/Playlist'
+        required: true
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Playlist'
+        400:
+          description: Invalid ID supplied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        404:
+          description: video not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+  
+  /playlist/{playlistId}/{videoId}/deleteVideo:
+    delete:
+      tags:
+      - playlist
+      summary: Deletes a video
+      operationId: deleteVideoFromPlaylist
+      parameters:
+      - name: ownerid
+        in: query
+        description: The user name for login
+        required: true
+        schema:
+          type: string
+      
+      - name: videoId
+        in: path
+        description: video id to delete
+        required: true
+        schema:
+          type: integer
+          format: int64
+          
+      - name: playlistId
+        in: path
+        description: playlist id to delete video in
+        required: true
+        schema:
+          type: integer
+          format: int64
+          
+      responses:
+        200:
+            description: successful operation
+        400:
+          description: Invalid ID supplied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        404:
+          description: video not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+                    
+      security:
+        - BasicAuth: []
+  
+  
+  /user:
+    post:
+      tags:
+      - user
+      summary: Create user
+      description: This can only be done by the logged in user.
+      operationId: createUser
+      requestBody:
+        description: Created user object
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        default:
+          description: successful operation
+          content: {}
+      x-codegen-request-body-name: body
+
+  /user/login:
+    get:
+      tags:
+      - user
+      summary: Logs user into the system
+      operationId: loginUser
+      parameters:
+      - name: username
+        in: query
+        description: The user name for login
+        required: true
+        schema:
+          type: string
+      - name: password
+        in: query
+        description: The password for login in clear text
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          headers:
+            X-Rate-Limit:
+              description: calls per hour allowed by the user
+              schema:
+                type: integer
+                format: int32
+            X-Expires-After:
+              description: date in UTC when token expires
+              schema:
+                type: string
+                format: date-time
+          content:
+            application/xml:
+              schema:
+                type: string
+            application/json:
+              schema:
+                type: string
+        400:
+          description: Invalid username/password supplied
+          content: {}
+          
+  /user/logout:
+    get:
+      tags:
+      - user
+      summary: Logs out current logged in user session
+      operationId: logoutUser
+      responses:
+        default:
+          description: successful operation
+          content: {}
+      security:
+        - BasicAuth: []
+          
+  /user/{username}:
+    put:
+      tags:
+      - user
+      summary: Updated user
+      description: This can only be done by the logged in user.
+      operationId: updateUsername
+      parameters:
+      - name: username
+        in: path
+        description: name that need to be updated
+        required: true
+        schema:
+          type: string
+      requestBody:
+        description: Updated user object
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        400:
+          description: Invalid user supplied
+          content: {}
+        404:
+          description: User not found
+          content: {}
+      security:
+        - BasicAuth: []
+      
+    delete:
+      tags:
+      - user
+      summary: Delete user
+      description: This can only be done by the logged in user.
+      operationId: deleteUser
+      parameters:
+      - name: username
+        in: path
+        description: The name that needs to be deleted
+        required: true
+        schema:
+          type: string
+      responses:
+        400:
+          description: Invalid username supplied
+          content: {}
+        404:
+          description: User not found
+          content: {}
+          
+      security:
+        - BasicAuth: []
+          
+components:
+
+  schemas:
+  
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        username:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        phone:
+          type: string
+      xml:
+        name: User
+        
+    Video:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        title:
+          type: string
+        key:
+          type: string
+          format: uuid
+      xml:
+        name: Video
+        
+    Playlist:
+      type: object
+      properties:
+        userid:
+          type: integer
+          format: int64
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        videos:
+          type: array
+          items:
+            $ref: '#/components/schemas/Video'
+        is_private:
+          type: boolean
+        
+      xml:
+        name: Playlist
+        
+    ApiResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        type:
+          type: string
+        message:
+          type: string
+          
+  securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: basic
+
+
+  
+
