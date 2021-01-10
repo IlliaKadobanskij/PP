@@ -1,0 +1,17 @@
+User
+{
+    "login": "roma",
+    "hash_password": 1234
+}
+
+Playlist
+{
+    "name": "illia_playlist",
+    "owner_id": 1,
+    "is_private": true
+}
+
+Video
+{
+    "url": "video1"
+}
